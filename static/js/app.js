@@ -17,13 +17,10 @@ function init() {
         console.log("samples.json", samples);
 
         PopulateSelect();
-
     });
 
     console.log("init ending");
 }
-
-
 
 // Populate the select drop down for the data sets
 function PopulateSelect() {
@@ -48,6 +45,7 @@ function optionChanged(value) {
 
     LoadDemographicInfo(selectedDataset);
     LoadBarChart(selectedDataset);
+    LoadBubbleChart(selectedDataset);
 }
 
 //--------------------------------------------------
@@ -62,21 +60,25 @@ function FilterByDatasetID(record) {
 
 // Populate the bar chart.
 function LoadBarChart(selectedDataset) {
+    // * Use `sample_values` as the values for the bar chart.
+    // * Use `otu_ids` as the labels for the bar chart.
+    // * Use `otu_labels` as the hovertext for the chart.
     var barSamples = samples.samples.filter(FilterByDatasetID)[0];
     console.log("barSamples", barSamples);   
     // Take just top 10 of values
     var top10Samples = barSamples.sample_values.splice(0, 10).reverse();
     console.log("top10Samples", top10Samples);
-    var top10Ids = barSamples.otu_ids.splice(0, 10).map(x => `OTU ${x}`).reverse();
+    var top10Ids = barSamples.otu_ids.splice(0, 10).map(x =>  `OTU ${x}`).reverse();
     console.log("top10Ids", top10Ids);    
     var top10Labels = barSamples.otu_labels.splice(0, 10).reverse();
     console.log("top10Labels", top10Labels);
     
-    
+
     // Trace1 for the top 10 samples
     var Trace1 = {
         y: top10Ids,
         x: top10Samples,
+        text: top10Labels,
         type: 'bar',
         orientation: 'h'
     };
@@ -86,10 +88,41 @@ function LoadBarChart(selectedDataset) {
 
     // No title
     var layout = {
-    }
+    };
 
     Plotly.newPlot("bar", data, layout);
+}
 
+function LoadBubbleChart(selectedDataset) {
+    // * Use `otu_ids` for the x values.
+    // * Use `sample_values` for the y values.
+    // * Use `sample_values` for the marker size.
+    // * Use `otu_ids` for the marker colors.
+    // * Use `otu_labels` for the text values.
+    var bubbleSamples = samples.samples.filter(FilterByDatasetID)[0];
+
+    // colors need to be based on something unique, so use otu ids
+
+    var Trace1 = {
+        x: bubbleSamples.otu_ids,
+        y: bubbleSamples.sample_values,
+        text: bubbleSamples.otu_labels,
+        mode: 'markers',
+        marker: {
+            color: bubbleSamples.otu_ids.map(x => `rgb(${255-x%255}, ${x%255}, ${255-x%255})`),
+            size: bubbleSamples.sample_values
+        }
+    };
+
+    var data = [Trace1];
+   
+    layout = {
+        xaxis : {
+            title: "OTU ID"
+        }
+    };
+
+    Plotly.newPlot("bubble", data, layout);
 }
 
 function LoadDemographicInfo(selectedDataset) {
@@ -109,7 +142,6 @@ function LoadDemographicInfo(selectedDataset) {
     table.append("tr").append("td").text(`wfreq: ${metaData.wfreq}`);
     console.log("sampleMetaData", sampleMetaData);
  
-    // sampleMetaData.data([1]).enter().append("p").text(`id: ${metaData.id}`);
 }
 
 init();
