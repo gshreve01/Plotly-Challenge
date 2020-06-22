@@ -46,6 +46,7 @@ function optionChanged(value) {
     LoadDemographicInfo(selectedDataset);
     LoadBarChart(selectedDataset);
     LoadBubbleChart(selectedDataset);
+    LoadPieChart(selectedDataset);
 }
 
 //--------------------------------------------------
@@ -64,13 +65,14 @@ function LoadBarChart(selectedDataset) {
     // * Use `otu_ids` as the labels for the bar chart.
     // * Use `otu_labels` as the hovertext for the chart.
     var barSamples = samples.samples.filter(FilterByDatasetID)[0];
+     
     console.log("barSamples", barSamples);   
     // Take just top 10 of values
-    var top10Samples = barSamples.sample_values.splice(0, 10).reverse();
+    var top10Samples = barSamples.sample_values.slice(0, 10).reverse();
     console.log("top10Samples", top10Samples);
-    var top10Ids = barSamples.otu_ids.splice(0, 10).map(x =>  `OTU ${x}`).reverse();
+    var top10Ids = barSamples.otu_ids.slice(0, 10).map(x =>  `OTU ${x}`).reverse();
     console.log("top10Ids", top10Ids);    
-    var top10Labels = barSamples.otu_labels.splice(0, 10).reverse();
+    var top10Labels = barSamples.otu_labels.slice(0, 10).reverse();
     console.log("top10Labels", top10Labels);
     
 
@@ -100,6 +102,7 @@ function LoadBubbleChart(selectedDataset) {
     // * Use `otu_ids` for the marker colors.
     // * Use `otu_labels` for the text values.
     var bubbleSamples = samples.samples.filter(FilterByDatasetID)[0];
+    console.log("bubbleSamples", bubbleSamples);
 
     // colors need to be based on something unique, so use otu ids
 
@@ -142,6 +145,38 @@ function LoadDemographicInfo(selectedDataset) {
     table.append("tr").append("td").text(`wfreq: ${metaData.wfreq}`);
     console.log("sampleMetaData", sampleMetaData);
  
+}
+
+function LoadPieChart(selectedDataset) {
+    console.log("selectedDataset", selectedDataset);
+    var pieSamples = samples.samples.filter(FilterByDatasetID)[0];
+    console.log("pieSamples", pieSamples);   
+    
+    var top10SampleValues =  pieSamples.sample_values.slice(0, 10);
+    console.log("top10SampleValues", top10SampleValues)    
+    
+    var top10Ids =  pieSamples.otu_ids.slice(0, 10);
+    console.log("top10Ids", top10Ids);
+
+    var top10Labels = pieSamples.otu_labels.slice(0, 10);
+    console.log("top10Labels", top10Labels);
+
+    var Trace1 = {
+        values: top10SampleValues,
+        labels: top10Ids,
+        text: top10Labels,  
+        textinfo: 'percent',
+        hoverinfo: 'text',
+        type: "pie"
+    };
+
+    var data = [Trace1];
+
+    var layout = {
+
+    }
+
+    Plotly.newPlot("pie", data, layout);
 }
 
 init();
