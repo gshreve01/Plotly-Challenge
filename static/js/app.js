@@ -17,10 +17,13 @@ function init() {
         console.log("samples.json", samples);
 
         PopulateSelect();
+
     });
 
     console.log("init ending");
 }
+
+
 
 // Populate the select drop down for the data sets
 function PopulateSelect() {
@@ -44,6 +47,7 @@ function optionChanged(value) {
     console.log("selectedDataset", selectedDataset);
 
     LoadDemographicInfo(selectedDataset);
+    LoadBarChart(selectedDataset);
 }
 
 //--------------------------------------------------
@@ -54,6 +58,40 @@ function FilterByDatasetID(record) {
 
 //--------------------------------------------------
 // Load Graphic Methods
+
+
+// Populate the bar chart.
+function LoadBarChart(selectedDataset) {
+    var barSamples = samples.samples.filter(FilterByDatasetID)[0];
+    console.log("barSamples", barSamples);   
+    // Take just top 10 of values
+    var top10Samples = barSamples.sample_values.splice(0, 10).reverse();
+    console.log("top10Samples", top10Samples);
+    var top10Ids = barSamples.otu_ids.splice(0, 10).map(x => `OTU ${x}`).reverse();
+    console.log("top10Ids", top10Ids);    
+    var top10Labels = barSamples.otu_labels.splice(0, 10).reverse();
+    console.log("top10Labels", top10Labels);
+    
+    
+    // Trace1 for the top 10 samples
+    var Trace1 = {
+        y: top10Ids,
+        x: top10Samples,
+        type: 'bar',
+        orientation: 'h'
+    };
+
+    // data
+    var data = [Trace1];
+
+    // No title
+    var layout = {
+    }
+
+    Plotly.newPlot("bar", data, layout);
+
+}
+
 function LoadDemographicInfo(selectedDataset) {
     var metaData = samples.metadata.filter(FilterByDatasetID)[0];
     console.log("metaData", metaData);    
