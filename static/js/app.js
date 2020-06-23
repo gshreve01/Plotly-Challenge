@@ -104,6 +104,7 @@ function LoadGaugeChart(wfreqNum) {
         showlegend: false,
         hole: 0.4,
         rotation: 90,
+        name: "Washing Frequency",
         values: [81 / 9, 81 / 9, 81 / 9, 81 / 9, 81 / 9, 81 / 9, 81 / 9, 81 / 9, 81 / 9, 81],
         text: ['0-1', '1-2', '2-3', '3-4', '4-5', '5-6', '6-7', '7-8', '8-9'],
         direction: 'clockwise',
@@ -125,31 +126,33 @@ function LoadGaugeChart(wfreqNum) {
         where you need to run this equation for t taking values within the range from 0 to 360, then you will get your x and y each on the boundary of the circle.
     */
 
-    // a value of 9 will be at 0
-    // a value of 0 will be at 180
-    var degrees = 180 + wfreqNum * 20;
-    degrees = 20;
-    console.log("degrees", degrees);
-    var radius = .5;
     var originX = .5;
     var originY = .5;
 
-    // x1 = radius * Math.cos(Math.PI / 9) + originX;
-    // y1 = radius * Math.sin(Math.PI / 9) + originY;
-    // needle
-    var degrees = 180, radius = .2;
-    var radians = wfreqNum * Math.PI / 9;
-    console.log("radians", radians);
-    var x1 = 1 + Math.cos(radians);
-    var y1 = Math.sin(radians);
+    // // x1 = radius * Math.cos(Math.PI / 9) + originX;
+    // // y1 = radius * Math.sin(Math.PI / 9) + originY;
+    // // needle
+    // var degrees = 180, radius = .2;
+    // var radians = wfreqNum * Math.PI / 9;
+    // console.log("radians", radians);
+    // var x1 = 1 + Math.cos(radians);
+    // var y1 = Math.sin(radians);
 
-    var wfFreqRanges = [{ "x": .39, "y": .5 },
-    { "x": .4, "y": .568 },
-    { "x": .42, "y": .6365 }
+    var wfFreqRanges = [{ "x": .32, "y": .5 },
+    { "x": .336, "y": .575 },
+    { "x": .355, "y": .66 }, 
+    { "x": .412, "y": .708 }, // *
+    { "x": .47, "y": .715 },
+    { "x": .53, "y": .718 },
+    { "x": .588, "y": .710},
+    { "x": .638, "y": .65}, 
+    { "x": .665, "y": .578},
+    { "x": .71, "y": .5}
     ];
 
-    x1 = .39;
-    y1 = .5;
+    var coords = wfFreqRanges[wfreqNum];
+    x1 = coords.x;
+    y1 = coords.y;
     // var x1 = -1 * radius * Math.cos(radians);
     // var y1 = radius * Math.sin(radians);
     console.log("x1, y1", x1, y1);
@@ -171,7 +174,7 @@ function LoadGaugeChart(wfreqNum) {
             {
                 opacity: 0.6,
                 type: 'path',
-                path: `M ${x1}, ${y1}, L .5, .52, L .5, .48, L .39, .5 Z`,
+                path: `M ${x1}, ${y1}, L ${originX}, ${originY + .02}, L ${originX}, ${originY - .02}, L ${x1}, ${y1} Z`,
                 fillcolor: 'purple',
                 line: {
                     opacity: 0.3,
@@ -180,22 +183,22 @@ function LoadGaugeChart(wfreqNum) {
             },
             {
                 type: 'circle',
-                x0: 0.51,
-                y0: 0.52,
-                x1: 0.49,
-                y1: 0.48,
+                x0: originX + .01,
+                y0: originY + .02,
+                x1: originX - .01,
+                y1: originY - .02,
                 fillcolor: 'blue',
                 opacity: 0.75
             }
         ],
-        title: 'Chart',
+        title: 'Washing Frequency',
         xaxis: { visible: false, range: [-1, 1] },
         yaxis: { visible: false, range: [-1, 1] }
     }
 
     var dataGauge = [traceGauge]
 
-    Plotly.plot('gauge', dataGauge, gaugeLayout)
+    Plotly.newPlot('gauge', dataGauge, gaugeLayout)
 }
 
 function LoadBubbleChart(selectedDataset) {
