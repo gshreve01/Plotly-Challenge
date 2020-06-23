@@ -191,7 +191,7 @@ function LoadGaugeChart(wfreqNum) {
                 opacity: 0.75
             }
         ],
-        title: 'Washing Frequency',
+        title: '<b>Belly Button Washing Frequency</b><br>Scrubs per Week',
         xaxis: { visible: false, range: [-1, 1] },
         yaxis: { visible: false, range: [-1, 1] }
     }
